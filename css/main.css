@@ -104,4 +104,11 @@ a{ color: #fff; }
 
 
 
-
+.addbtn{ 
+	position: absolute;
+	top: 0.3em;
+	right: 0.4em;
+}
+.addbtn .btn{ 
+	font-size: 3rem;
+}
