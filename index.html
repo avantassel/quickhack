@@ -1,0 +1,27 @@
+<html>
+<head>
+	<script src="https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
+	<script src="https://cdn.firebase.com/v0/firebase.js"></script>
+	<!-- AngularJS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+
+	<script>
+	  var myApp = angular.module("MyApp", ["firebase"]);
+	 
+	  function MyController($scope, $firebase) {
+	    var timersRef = new Firebase("https://quickhack.firebaseio.com/timers");
+	    // Automatically syncs everywhere in realtime
+	    $scope.timers = $firebase(timersRef);
+	  }
+	</script>
+</head>
+<body>
+<div ng-controller="MyController">
+  <ul ng-repeat="clock in timers">
+    <li></li>
+  </ul>
+  <input type="text" ng-model="newTimer"/>
+  <button type="submit" ng-click="addTimer()">Add New Timer</button>
+</div>
+</body>
+</html>
