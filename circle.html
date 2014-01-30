@@ -2,7 +2,7 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app="myapp"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,55 +10,41 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,600,300' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
 
-    
+        <script src="https://cdn.firebase.com/v0/firebase.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
+        
     </head>
-    <body>
+    <body ng-controller="MyController">
 
-    	<div class="wrap-full timers-2">
-    		<div class="timer" style="background: hsl(287, 20%, 50%);">
+    	<div class="wrap-full timers-2" ng-repeat="timer in timers">
+    		<div class="timer" style="background: hsl({{timer.hsl}}, 20%, 50%);">
     			
-    			        <h1 class="text-center">Sunday Stout</h1>
-    		
-    					<div class="inner">
-    						<div class="time">
-    							<span class="number lg">45</span>
-    							<span class="number colon">:</span>
-    							<span class="number sm">24</span>
-    							<i class="glyphicon glyphicon-play ctrl"></i>
-    							<i class="glyphicon glyphicon-pause ctrl hidden"></i>
-    						</div>
-    						
-    		
-    						
-    						<a href="#" class="addOne pull-left ctrl-sub"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
-    						<a href="#" class="subOne pull-right ctrl-sub"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
-    					</div>
+		        <h1 class="text-center">{{timer.name}}</h1>
+	
+				<div class="inner">
+					<div class="time">
+						<span class="number lg">45</span>
+						<span class="number colon">:</span>
+						<span class="number sm">24</span>
+						<i class="glyphicon glyphicon-play ctrl"></i>
+						<i class="glyphicon glyphicon-pause ctrl hidden"></i>
+					</div>
+					
+	
+					
+					<a href="#" class="addOne pull-left ctrl-sub"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
+					<a href="#" class="subOne pull-right ctrl-sub"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
+				</div>
     		</div>
-    		
-    		<div class="timer" style="background: hsl(100, 20%, 50%);">
-    			
-    			        <h1 class="text-center">Sunday Stout</h1>
-    		
-    					<div class="inner">
-    						<div class="time">
-    							<span class="number lg">45</span>
-    							<span class="number colon">:</span>
-    							<span class="number sm">24</span>
-    							<i class="glyphicon glyphicon-play ctrl"></i>
-    							<i class="glyphicon glyphicon-pause ctrl hidden"></i>
-    						</div>
-    						
-    		
-    						
-    						<a href="#" class="addOne pull-left ctrl-sub"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
-    						<a href="#" class="subOne pull-right ctrl-sub"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
-    					</div>
-    		</div>
+
+			<div class="addbtn">
+	    		<a href="#" class="btn" ng-click="addTimer($event)"><i class="glyphicon glyphicon-plus"></i></a>
+			</div>
     	</div>
 
         
