@@ -6,7 +6,8 @@ function MyController($scope, $firebase) {
 	$scope.timers = $firebase(timersRef);
 
 	$scope.addTimer = function() {
-	    $scope.timers.$add({name: $scope.name, time: '3600'});
+		$hsl = Math.random() * (360 - 1) + 1;
+	    $scope.timers.$add({name: $scope.name, time: '3600', hsl: Math.floor($hsl) });
 	}
 
 	$scope.timerRunning = true;
