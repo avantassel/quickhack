@@ -1,6 +1,12 @@
-var app = angular.module("myapp", ["firebase"]);
+var app = angular.module("brewapp", ["firebase"]);
 
-function MyController($scope, $firebase) {
+function SidebarController($scope, $firebase) {
+	var timersRef = new Firebase("https://quickhack.firebaseio.com/timers");
+	// Automatically syncs everywhere in realtime
+	$scope.timers = $firebase(timersRef);
+}
+
+function MainController($scope, $firebase) {
 	var timersRef = new Firebase("https://quickhack.firebaseio.com/timers");
 	// Automatically syncs everywhere in realtime
 	$scope.timers = $firebase(timersRef);
@@ -22,4 +28,3 @@ function MyController($scope, $firebase) {
         $scope.timerRunning = false;
     };
 }
-app.$inject = ['$scope'];

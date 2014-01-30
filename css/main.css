@@ -15,12 +15,12 @@ h1, .h1{
 }
 
 
-a{ color: #fff; }
+a.addOne, a.subOne { color: #fff; }
 
 
 
 
-.timer{
+/*.timer{
 	height: 100vh;
 	overflow: auto;
 	padding: 50px 0;
@@ -31,8 +31,6 @@ a{ color: #fff; }
 	max-width: 250px;
 }
 
-
-
 .timer{ width: 100%; }
 
 @media (min-width: 768px) {
@@ -41,9 +39,11 @@ a{ color: #fff; }
 	.timers-2 .timer{ width: 50%; }
 	.timers-3 .timer{ width: 30%; }
 }
+*/
 
-
-
+.inner{
+	padding-top: 2px;
+}
 
 .time{
 	border: 2px solid rgba(255,255,255,.7);
