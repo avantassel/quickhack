@@ -66,8 +66,8 @@ function MainCtrl($scope, $firebase, $interval) {
 
 		if($(event.target).hasClass('glyphicon-play')){
 			$scope.clock = $interval(function () { 
-				//this does not update firebase
 				timer.elapsed++; 
+				//this does not update firebase, not sure why
 				//$scope.timers.$save();
 				if(timer.elapsed == timer.duration){
 					$scope.stopTimer();

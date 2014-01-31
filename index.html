@@ -11,7 +11,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/dashboard.css">
         <link rel="stylesheet" href="css/main.css">
 
@@ -38,13 +37,14 @@
             <div class="navbar-collapse collapse" ng-controller="MainCtrl">
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" class="btn" ng-click="addTimer(this)"><i class="glyphicon glyphicon-plus"></i></a></li>
-                <li>
-                    <div ng-hide="user.id">
-                        <a href="#" class="btn" ng-click="login(this)">Login</a>
-                    </div>
-                    <div ng-show="user.id" class="user-photo">
-                        <img src=""/><a href="#" class="btn" ng-click="logout(this)">Logout</a>
-                    </div>
+                <li ng-hide="user.id">
+                    <a href="#" class="btn" ng-click="login(this)">Login</a>
+                </li>
+                <li ng-show="user.id" class="user-photo">
+                    <img src=""/>
+                </li>
+                <li ng-show="user.id">
+                    <a href="#" class="btn" ng-click="logout(this)">Logout</a>
                 </li>
               </ul>
               <form class="navbar-form navbar-right" ng-submit="addTimer()">
