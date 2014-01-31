@@ -2,14 +2,13 @@
 html{ height: 100%; }
 body{ min-height: 100%; }
 
-body,
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
+.timer{
 	color: rgba(255,255,255,.9);
 	font-family: 'Open Sans', sans-serif;
 }
 
 
-h1, .h1{
+.time h1, .time .h1{
 	font-size: 4.8rem;
 	font-weight: 200;
 }
