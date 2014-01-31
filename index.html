@@ -42,8 +42,8 @@
                     <div ng-hide="user.id">
                         <a href="#" class="btn" ng-click="login(this)">Login</a>
                     </div>
-                    <div ng-show="user.id">
-                        <img src="{{setUserPhoto()}}"/><a href="#" class="btn" ng-click="logout(this)">Logout</a>
+                    <div ng-show="user.id" class="user-photo">
+                        <img src=""/><a href="#" class="btn" ng-click="logout(this)">Logout</a>
                     </div>
                 </li>
               </ul>
@@ -78,8 +78,7 @@
                                     <span class="min number lg">{{getMin(timer)}}</span>
                                     <span class="number colon">:</span>
                                     <span class="sec number sm">{{getSec(timer)}}</span>
-                                    <a href="#" ng-click="startTimer(timer,this)"><i class="glyphicon glyphicon-play ctrl"></i></a>
-                                    <a href="#" ng-click="stopTimer(timer,this)"><i class="glyphicon glyphicon-pause ctrl hidden"></i></a>
+                                    <a href="#" ng-click="startTimer(timer,$event);" ><i class="glyphicon glyphicon-play ctrl"></i></a>
                                 </div>
                                 
                                 <a href="#" class="addOne pull-left ctrl-sub" ng-click="addMin(this)"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>

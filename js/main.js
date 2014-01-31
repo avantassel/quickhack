@@ -23,20 +23,13 @@ function MainCtrl($scope, $firebase, $interval) {
 		    if(!$exists)
 		    	new Firebase(FBURL).child('users/'+user.id).set(user);
 		    $scope.user=user;
+		    $('.user-photo img').attr('src','http://graph.facebook.com/'+$scope.user.id+'/picture');
 		    $scope.loadUserTimers();
 
 		  } else {
 		    console.log('logged out');
 		  }
 		});
-
-	$scope.setUserPhoto = function(){
-		if($scope.user.id)
-			return 'http://graph.facebook.com/'+$scope.user.id+'/picture';	
-		else
-			return '';
-	}
-	
 
 	$scope.logout = function(){
 
@@ -71,28 +64,18 @@ function MainCtrl($scope, $firebase, $interval) {
 
 	$scope.startTimer = function (timer,elem){
 
-		var newtimer = $interval(function () {}, 1000);
-
-		$scope.timers.elapsed++;
-
-    	function success() {
-        	console.log("done");
-	    }
-
-	    function error() {
-	        console.log("cancelled or error");
-	    }
-
-	    function notify() {
-	        console.log("updating");
-	    }
-
-	    newtimer.then(success, error, notify)
-
-    };
-
-    $scope.stopTimer = function (e){
-        
+		if($(elem.target).hasClass('glyphicon-play')){
+			$scope.clock = $interval(function () { 
+				timer.elapsed++; 
+				if(timer.elapsed == timer.duration){
+					$scope.stopTimer();
+				}
+			}, 1000);	
+			$(elem.target).removeClass('glyphicon-play').addClass('glyphicon-pause');
+		} else {
+			$interval.cancel($scope.clock);
+			$(elem.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
+		}
     };
 
     $scope.addMin = function (e){
