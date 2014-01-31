@@ -104,7 +104,9 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 		}
 
 		$scope.timers.$add(newtimer);
-		
+
+		//update placeholder to have text of last timer name
+		$(event.target).find('.form-control').val('').attr('placeholder', $scope.timerName);
 	};
 
 	$scope.startTimer = function (key,timer,event){
