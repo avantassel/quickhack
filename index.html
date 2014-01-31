@@ -20,6 +20,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
         <script src="https://cdn.firebase.com/v0/firebase.js"></script>
         <script src="https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js"></script>
+        
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -34,12 +35,20 @@
               <a class="navbar-brand" href="#">Brew Timers</a>
             </div>
             <!-- Main -->
-            <div class="navbar-collapse collapse" ng-controller="MainController">
+            <div class="navbar-collapse collapse" ng-controller="MainCtrl">
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" class="btn" ng-click="addTimer($event)"><i class="glyphicon glyphicon-plus"></i></a></li>
+                <li><a href="#" class="btn" ng-click="addTimer(this)"><i class="glyphicon glyphicon-plus"></i></a></li>
+                <li>
+                    <div ng-hide="user.id">
+                        <a href="#" class="btn" ng-click="login(this)">Login</a>
+                    </div>
+                    <div ng-show="user.id">
+                        <img src="{{setUserPhoto()}}"/><a href="#" class="btn" ng-click="logout(this)">Logout</a>
+                    </div>
+                </li>
               </ul>
-              <form class="navbar-form navbar-right">
-                <input type="text" class="form-control" placeholder="Timer Name..." ng-model="name">
+              <form class="navbar-form navbar-right" ng-submit="addTimer(this)">
+                <input type="text" class="form-control" placeholder="Timer Name..." ng-model="timerName">
               </form>
             </div>
           </div>
@@ -48,14 +57,16 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- SideBar -->
-                <div class="col-sm-3 col-md-2 sidebar" ng-controller="SidebarController">
+                <div class="col-sm-3 col-md-2 sidebar" ng-controller="SidebarCtrl">
                   <ul class="nav nav-sidebar" ng-repeat="timer in timers">
-                    <li><a href="#">{{timer.name}}</a></li>
+                    <li>
+                        <a href="#">{{timer.name}}</a> <i>by <a href="{{timer.userId}}">{{timer.userName}}</a></i>
+                    </li>
                   </ul>
                 </div>
 
                 <!-- Main -->
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ng-controller="MainController">
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ng-controller="MainCtrl">
                   <h1 class="page-header">Dashboard</h1>
 
                   <div class="row placeholders" >
@@ -64,15 +75,15 @@
                         <div class="timer" style="background: hsl({{timer.hsl}}, 20%, 50%);">
                           <div class="inner">
                                 <div class="time">
-                                    <span class="number lg">45</span>
+                                    <span class="min number lg">{{getMin(timer)}}</span>
                                     <span class="number colon">:</span>
-                                    <span class="number sm">24</span>
-                                    <i class="glyphicon glyphicon-play ctrl"></i>
-                                    <i class="glyphicon glyphicon-pause ctrl hidden"></i>
+                                    <span class="sec number sm">{{getSec(timer)}}</span>
+                                    <a href="#" ng-click="startTimer(timer,this)"><i class="glyphicon glyphicon-play ctrl"></i></a>
+                                    <a href="#" ng-click="stopTimer(timer,this)"><i class="glyphicon glyphicon-pause ctrl hidden"></i></a>
                                 </div>
                                 
-                                <a href="#" class="addOne pull-left ctrl-sub"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
-                                <a href="#" class="subOne pull-right ctrl-sub"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
+                                <a href="#" class="addOne pull-left ctrl-sub" ng-click="addMin(this)"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
+                                <a href="#" class="subOne pull-right ctrl-sub" ng-click="subMin(this)"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
                             </div>
                           <h4>{{timer.name}}</h4>
                           <span class="text-muted">Desc</span>
@@ -83,6 +94,7 @@
             </div>
         </div>
  
+        <script src="https://cdn.firebase.com/js/simple-login/1.2.3/firebase-simple-login.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
         <script src="js/main.js"></script>
