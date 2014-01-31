@@ -40,6 +40,11 @@ a.addOne, a.subOne { color: #fff; }
 	padding-top: 2px;
 }
 
+.timer .remove {
+	padding: 10px;
+	float: right;
+}
+
 .time{
 	border: 2px solid rgba(255,255,255,.7);
 	border-radius: 100%;

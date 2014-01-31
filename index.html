@@ -58,9 +58,9 @@
             <div class="row">
                 <!-- SideBar -->
                 <div class="col-sm-3 col-md-2 sidebar" ng-controller="SidebarCtrl">
-                  <ul class="nav nav-sidebar" ng-repeat="timer in timers">
+                  <ul class="nav nav-sidebar" ng-repeat="(key,timer) in timers">
                     <li>
-                        <a href="#">{{timer.name}}</a> <i>by <a href="{{timer.userId}}">{{timer.userName}}</a></i>
+                        <a href="#">{{timer.tname}}</a> {{getDateDiff(timer.ts)}} <i>by <a href="{{timer.userId}}">{{timer.userName}}</a></i>
                     </li>
                   </ul>
                 </div>
@@ -71,20 +71,21 @@
 
                   <div class="row placeholders" >
 
-                    <div class="col-xs-6 col-sm-4 placeholder" ng-repeat="timer in timers">
+                    <div class="col-xs-6 col-sm-4 placeholder" ng-repeat="(key,timer) in timers">
                         <div class="timer" style="background: hsl({{timer.hsl}}, 20%, 50%);">
+                          <div class="remove" ng-show="user"><a href="#" ng-click="removeTimer(key,$event)" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-remove"></i></a></div>
                           <div class="inner">
                                 <div class="time">
                                     <span class="min number lg">{{getMin(timer)}}</span>
                                     <span class="number colon">:</span>
                                     <span class="sec number sm">{{getSec(timer)}}</span>
-                                    <a href="#" ng-click="startTimer(timer,$event)" ><i class="glyphicon glyphicon-play ctrl"></i></a>
+                                    <a href="#" ng-click="startTimer(key,timer,$event)" ><i class="glyphicon glyphicon-play ctrl"></i></a>
                                 </div>
-                                <a href="#" class="addOne pull-left ctrl-sub" ng-click="subMin(timer,$event)"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
-                                <a href="#" class="subOne pull-right ctrl-sub" ng-click="addMin(timer,$event)"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
+                                <a href="#" class="addOne pull-left ctrl-sub" ng-click="subMin(key,timer,$event)"><i class="glyphicon glyphicon-minus"></i><span class="number">1</span></a>
+                                <a href="#" class="subOne pull-right ctrl-sub" ng-click="addMin(key,timer,$event)"><i class="glyphicon glyphicon-plus"></i><span class="number">1</span></a>
                             </div>
-                          <h4>{{timer.name}}</h4>
-                          <span class="text-muted">Desc</span>
+                          <h4>{{timer.tname}}</h4>
+                          <span class="text-muted">{{getDateDiff(timer.ts)}}</span>
                         </div>
                     </div>
                   </div>
