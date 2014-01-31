@@ -8,14 +8,37 @@ function getTimers(userId, $firebase){
 
 app.controller("SidebarCtrl", function ($scope, $firebase) {
 	
+	//load anonymous timers
 	$scope.timers = getTimers('0',$firebase);
+	//add three way binding
+	$scope.timers.$bind($scope, "timers");
 
 });
 
 app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 	
-	//load anonymous timers
-	$scope.timers = getTimers('0',$firebase);
+	$scope.getTimers = function(userId){
+		//load anonymous timers
+		$scope.timers = getTimers(userId,$firebase);
+
+		//unbind first if unbind is set
+		if($scope.unbind)
+			$scope.unbind();
+
+		//add three way binding
+		$scope.timers.$bind($scope, "timers").then(function(unbind) {
+		  //save this to later unbind
+		  $scope.unbind = unbind;
+		});
+	};
+
+	//load the timers
+	if(!$scope.user)
+		$scope.getTimers('0');
+
+	// $scope.timers.$on("change", function() {
+ 	//  		console.log("A remote change was applied locally!");
+	// });
 
 	$scope.user = null;
 
@@ -34,13 +57,13 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 		    //set user photo
 		    $scope.user.photo = 'http://graph.facebook.com/'+user.id+'/picture';
 		    //load user timers
-		    $scope.timers = getTimers(user.id,$firebase);
+		    $scope.getTimers(user.id);
 		    $scope.$apply();
 
 		  } else {
 		    //logout
 		    $scope.user = null;
-			$scope.timers = getTimers('0',$firebase);
+		    $scope.getTimers('0');
 			$scope.$apply();
 		  }
 	});
@@ -87,14 +110,12 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
     };
 
     $scope.addMin = function (timer,event){
-        timer.duration+=60; 
-        $scope.timers.$save();
+        timer.duration+=60;
     };
 
     $scope.subMin = function (timer,event){
         if(timer.duration>0)
         	timer.duration-=60;
-        $scope.timers.$save();
     };
 
     $scope.getMin = function (timer){
