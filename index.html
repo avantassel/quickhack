@@ -37,14 +37,14 @@
             <div class="navbar-collapse collapse" ng-controller="MainCtrl">
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" class="btn" ng-click="addTimer(this)"><i class="glyphicon glyphicon-plus"></i></a></li>
-                <li ng-hide="user.id">
-                    <a href="#" class="btn" ng-click="login(this)">Login</a>
+                <li ng-hide="user">
+                    <a href="#" class="btn" ng-click="login()">Login</a>
                 </li>
-                <li ng-show="user.id" class="user-photo">
-                    <img src=""/>
+                <li ng-show="user" class="user-photo">
+                    <img ng-src="{{user.photo}}"/>
                 </li>
-                <li ng-show="user.id">
-                    <a href="#" class="btn" ng-click="logout(this)">Logout</a>
+                <li ng-show="user">
+                    <a href="#" class="btn" ng-click="logout()">Logout</a>
                 </li>
               </ul>
               <form class="navbar-form navbar-right" ng-submit="addTimer()">

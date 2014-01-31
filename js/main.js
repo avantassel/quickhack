@@ -1,42 +1,53 @@
 var app = angular.module("brewapp", ["firebase"]);
-var FBURL = "https://quickhack.firebaseio.com";
 
-function SidebarCtrl($scope, $firebase) {
-	
-	$scope.timers = $firebase(new Firebase(FBURL+'/users/0/timers'));
+app.FBURL = "https://quickhack.firebaseio.com";
 
+function getTimers(userId, $firebase){
+	return $firebase(new Firebase(app.FBURL+'/users/'+userId+'/timers'));
 }
 
-function MainCtrl($scope, $firebase, $interval) {
+app.controller("SidebarCtrl", function ($scope, $firebase) {
 	
-	$scope.timers = $firebase(new Firebase(FBURL+'/users/0/timers'));
+	$scope.timers = getTimers('0',$firebase);
 
-	$scope.auth = new FirebaseSimpleLogin(new Firebase(FBURL), function(error, user) {
+});
+
+app.controller("MainCtrl", function ($scope, $firebase, $interval) {
+	
+	//load anonymous timers
+	$scope.timers = getTimers('0',$firebase);
+
+	$scope.user = null;
+
+	//setup auth
+	$scope.auth = new FirebaseSimpleLogin(new Firebase(app.FBURL), function(error, user) {
 		  if (error) {
-		    // an error occurred while attempting login
 		    console.log(error);
 		  } else if (user) {
-		    // user authenticated with Firebase
-		    console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
 		    //create new user
-		    $exists = new Firebase(FBURL).child('users/'+user.id);
+		    $exists = new Firebase(app.FBURL).child('users/'+user.id);
 		    if(!$exists)
-		    	new Firebase(FBURL).child('users/'+user.id).set(user);
+		    	new Firebase(app.FBURL).child('users/'+user.id).set(user);
+		    
+		    //set user obj
 		    $scope.user=user;
-		    $('.user-photo img').attr('src','http://graph.facebook.com/'+$scope.user.id+'/picture');
-		    $scope.loadUserTimers();
+		    //set user photo
+		    $scope.user.photo = 'http://graph.facebook.com/'+user.id+'/picture';
+		    //load user timers
+		    $scope.timers = getTimers(user.id,$firebase);
+		    $scope.$apply();
 
 		  } else {
-		    console.log('logged out');
+		    //logout
+		    $scope.user = null;
+			$scope.timers = getTimers('0',$firebase);
+			$scope.$apply();
 		  }
-		});
+	});
 
 	$scope.logout = function(){
 
-		$scope.user = "";
-		$scope.timers = {};
 		$scope.auth.logout();
-
 	};
 
 	$scope.login = function(){
@@ -45,12 +56,6 @@ function MainCtrl($scope, $firebase, $interval) {
 		  rememberMe: true,
 		  scope: 'email,user_likes'
 		});
-	};
-
-	$scope.loadUserTimers = function(){
-
-		$scope.timers = $firebase(new Firebase(FBURL+'/users/'+$scope.user.id+'/timers'));
-
 	};
 
 	$scope.addTimer = function() {
@@ -101,4 +106,4 @@ function MainCtrl($scope, $firebase, $interval) {
     	var time = timer.duration-timer.elapsed;
         return time - $scope.getMin(timer) * 60;
     };
-}
+});
