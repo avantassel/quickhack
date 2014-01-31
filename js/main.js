@@ -37,7 +37,7 @@ function MainCtrl($scope, $firebase, $interval) {
 		$scope.timers = {};
 		$scope.auth.logout();
 
-	}
+	};
 
 	$scope.login = function(){
 		
@@ -45,45 +45,50 @@ function MainCtrl($scope, $firebase, $interval) {
 		  rememberMe: true,
 		  scope: 'email,user_likes'
 		});
-	}
+	};
 
 	$scope.loadUserTimers = function(){
 
 		$scope.timers = $firebase(new Firebase(FBURL+'/users/'+$scope.user.id+'/timers'));
 
-	}
+	};
 
-	$scope.addTimer = function(elem) {
+	$scope.addTimer = function() {
 		$hsl = Math.random() * (360 - 1) + 1;
 		
 		if($scope.user)
 			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor($hsl), userId: $scope.user.id, userName: $scope.user.displayName});
 		else
 			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor($hsl), userId: '0', userName: 'Anonymous'});
-	}
+	};
 
-	$scope.startTimer = function (timer,elem){
+	$scope.startTimer = function (timer,event){
 
-		if($(elem.target).hasClass('glyphicon-play')){
+		if($(event.target).hasClass('glyphicon-play')){
 			$scope.clock = $interval(function () { 
+				//this does not update firebase
 				timer.elapsed++; 
+				//$scope.timers.$save();
 				if(timer.elapsed == timer.duration){
 					$scope.stopTimer();
 				}
 			}, 1000);	
-			$(elem.target).removeClass('glyphicon-play').addClass('glyphicon-pause');
+			$(event.target).removeClass('glyphicon-play').addClass('glyphicon-pause');
 		} else {
 			$interval.cancel($scope.clock);
-			$(elem.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
+			$(event.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
 		}
     };
 
-    $scope.addMin = function (e){
-        
+    $scope.addMin = function (timer,event){
+        timer.duration+=60; 
+        $scope.timers.$save();
     };
 
-    $scope.subMin = function (e){
-        
+    $scope.subMin = function (timer,event){
+        if(timer.duration>0)
+        	timer.duration-=60;
+        $scope.timers.$save();
     };
 
     $scope.getMin = function (timer){
