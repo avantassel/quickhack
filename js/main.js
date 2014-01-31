@@ -3,7 +3,7 @@ var FBURL = "https://quickhack.firebaseio.com";
 
 function SidebarCtrl($scope, $firebase) {
 	
-	$scope.timers = $firebase(new Firebase(FBURL+'/timers'));
+	$scope.timers = $firebase(new Firebase(FBURL+'/users/0/timers'));
 
 }
 
@@ -54,12 +54,13 @@ function MainCtrl($scope, $firebase, $interval) {
 	};
 
 	$scope.addTimer = function() {
-		$hsl = Math.random() * (360 - 1) + 1;
-		
+		var hsl = Math.random() * (360 - 1) + 1;
+		var timestamp = new Date().getTime();
+
 		if($scope.user)
-			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor($hsl), userId: $scope.user.id, userName: $scope.user.displayName});
+			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor(hsl), ts: timestamp, userId: $scope.user.id, userName: $scope.user.displayName});
 		else
-			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor($hsl), userId: '0', userName: 'Anonymous'});
+			$scope.timers.$add({name: $scope.timerName, duration: 3600, elapsed:0, hsl: Math.floor(hsl), ts: timestamp, userId: '0', userName: 'Anonymous'});
 	};
 
 	$scope.startTimer = function (timer,event){
