@@ -6,8 +6,7 @@ app.factory('brewService',function ($firebase) {
 	return { 
             fn: function(userId, callback) {
             	var ref = $firebase(new Firebase("https://quickhack.firebaseio.com/users/"+userId+"/timers"));
-				if(callback)
-					callback( ref );
+            	callback( ref );
 			}
 	}; 
 });
@@ -46,6 +45,7 @@ function formatDateDiff(ts){
 app.controller("MainCtrl", function ($scope, brewService, $interval) {
 	/* Auth */
 	$scope.user = null;
+	$scope.timers = {};
 
 	//setup auth
 	$scope.auth = new FirebaseSimpleLogin(new Firebase(app.FBURL), function(error, user) {
@@ -57,6 +57,7 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		    if(!$exists)
 		    	new Firebase(app.FBURL).child('users/'+user.id).set(user);
 		    
+		    
 		    //set user obj
 		    $scope.user=user;
 		    //set user photo
@@ -64,16 +65,17 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		    //load user timers
 		    brewService.fn(user.id, function(ref){
 				$scope.timers = ref;
+				// ref.$bind($scope,'timers');
+		    	// $scope.$apply();
 			});
-		    $scope.$apply();
 
 		  } else {
-		    //logout
 		    $scope.user = null;
 			brewService.fn('0', function(ref){
 				$scope.timers = ref;
+				// ref.$bind($scope,'timers');
+				//$scope.$apply();
 			});
-			$scope.$apply();
 		  }
 	});
 
@@ -120,7 +122,7 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		if($(event.target).hasClass('glyphicon-play')){
 			$scope.clock = $interval(function () { 
 				timer.elapsed++; 
-				$scope.timers.$save(key);
+				// $scope.timers.$save(key);
 				if(timer.elapsed == timer.duration){
 					$scope.stopTimer();
 				}
@@ -139,13 +141,13 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 
     $scope.addMin = function (key,timer,event){
         timer.duration+=60; 
-        $scope.timers.$save(key);
+        // $scope.timers.$save(key);
     };
 
     $scope.subMin = function (key,timer,event){
         if(timer.duration>0)
         	timer.duration-=60;
-        $scope.timers.$save(key);
+        // $scope.timers.$save(key);
     };
 
     $scope.getMin = function (timer){
