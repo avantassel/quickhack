@@ -1,10 +1,17 @@
-var app = angular.module("brewapp", ["firebase"]);
+var app = angular.module("brewapp",["firebase"]);
 
 app.FBURL = "https://quickhack.firebaseio.com";
 
-function getTimers(userId, $firebase){
-	return $firebase(new Firebase(app.FBURL+'/users/'+userId+'/timers'));
-}
+app.factory('brewService',function ($firebase) {
+	return { 
+            fn: function(userId, callback) {
+            	var ref = $firebase(new Firebase("https://quickhack.firebaseio.com/users/"+userId+"/timers"));
+				if(callback)
+					callback( ref );
+			}
+	}; 
+});
+
 
 function dateDiff(datepart, fromdate, todate) {	
   datepart = datepart.toLowerCase();	
@@ -18,38 +25,26 @@ function dateDiff(datepart, fromdate, todate) {
   return Math.floor( diff/divideBy[datepart]);
 }
 
-app.controller("SidebarCtrl", function ($scope, $firebase) {
-	
-	$scope.timers = getTimers('0',$firebase);
-
-	$scope.getDateDiff = function (ts){
-    	var today = new Date().getTime();
+function formatDateDiff(ts){
+	var today = new Date().getTime();
     	var resp = '';
     	if((time = dateDiff('s',ts,today)) < 60)
-    		resp = time+' secs ago';
+    		resp = (time==1)?time+' second ago':time+' seconds ago';
     	else if((time = dateDiff('n',ts,today)) < 60)
-    		resp = time+' mins ago';
+    		resp = time+' min ago';
     	else if((time = dateDiff('h',ts,today)) < 24)
-    		resp = time+' hrs ago';
+    		resp = (time==1)?time+' hour ago':time+' hours ago';
     	else if((time = dateDiff('d',ts,today)) < 30)
-    		resp = time+' days ago';
+    		resp = (time==1)?time+' day ago':time+' days ago';
     	else
-    		resp = time+' wks ago';
+    		resp = (time==1)?time+' week ago':time+' weeks ago';
     	
     	return resp;
-    };
+}
 
-});
 
-app.controller("MainCtrl", function ($scope, $firebase, $interval) {
-	
-	//load anonymous timers
-	$scope.timers = getTimers('0',$firebase);
-
-	// $scope.timers.$on("change", function() {
- 	//  		console.log("A remote change was applied locally!");
-	// });
-
+app.controller("MainCtrl", function ($scope, brewService, $interval) {
+	/* Auth */
 	$scope.user = null;
 
 	//setup auth
@@ -67,13 +62,17 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 		    //set user photo
 		    $scope.user.photo = 'http://graph.facebook.com/'+user.id+'/picture';
 		    //load user timers
-		    $scope.timers = getTimers(user.id,$firebase);
+		    brewService.fn(user.id, function(ref){
+				$scope.timers = ref;
+			});
 		    $scope.$apply();
 
 		  } else {
 		    //logout
 		    $scope.user = null;
-			$scope.timers = getTimers('0',$firebase);
+			brewService.fn('0', function(ref){
+				$scope.timers = ref;
+			});
 			$scope.$apply();
 		  }
 	});
@@ -90,6 +89,13 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 		  scope: 'email,user_likes'
 		});
 	};
+	/* End Auth */
+
+	/* Sidebar */
+	brewService.fn('0', function(ref){
+		$scope.pubtimers = ref;
+	});
+	/* End Sidebar*/
 
 	$scope.addTimer = function() {
 
@@ -114,7 +120,6 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 		if($(event.target).hasClass('glyphicon-play')){
 			$scope.clock = $interval(function () { 
 				timer.elapsed++; 
-				//this does not update firebase, not sure why
 				$scope.timers.$save(key);
 				if(timer.elapsed == timer.duration){
 					$scope.stopTimer();
@@ -125,6 +130,11 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
 			$interval.cancel($scope.clock);
 			$(event.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
 		}
+    };
+    
+    $scope.stopTimer = function(){
+    	$interval.cancel($scope.clock);
+    	$scope.clock = null;
     };
 
     $scope.addMin = function (key,timer,event){
@@ -153,19 +163,6 @@ app.controller("MainCtrl", function ($scope, $firebase, $interval) {
     };
 
     $scope.getDateDiff = function (ts){
-    	var today = new Date().getTime();
-    	var resp = '';
-    	if((time = dateDiff('s',ts,today)) < 60)
-    		resp = time+' secs ago';
-    	else if((time = dateDiff('n',ts,today)) < 60)
-    		resp = time+' mins ago';
-    	else if((time = dateDiff('h',ts,today)) < 24)
-    		resp = time+' hrs ago';
-    	else if((time = dateDiff('d',ts,today)) < 30)
-    		resp = time+' days ago';
-    	else
-    		resp = time+' wks ago';
-    	
-    	return resp;
+    	return formatDateDiff(ts);
     };
 });
