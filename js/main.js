@@ -11,7 +11,6 @@ app.factory('brewService',function ($firebase) {
 	}; 
 });
 
-
 function dateDiff(datepart, fromdate, todate) {	
   datepart = datepart.toLowerCase();	
   var diff = todate - fromdate;	
@@ -45,7 +44,10 @@ function formatDateDiff(ts){
 app.controller("MainCtrl", function ($scope, brewService, $interval) {
 	/* Auth */
 	$scope.user = null;
+	//fb object of all timers
 	$scope.timers = {};
+	//local array of running clocks
+	$scope.clocks = [];
 
 	//setup auth
 	$scope.auth = new FirebaseSimpleLogin(new Firebase(app.FBURL), function(error, user) {
@@ -56,25 +58,32 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		    $exists = new Firebase(app.FBURL).child('users/'+user.id);
 		    if(!$exists)
 		    	new Firebase(app.FBURL).child('users/'+user.id).set(user);
-		    
-		    
+		    		    
 		    //set user obj
 		    $scope.user=user;
 		    //set user photo
 		    $scope.user.photo = 'http://graph.facebook.com/'+user.id+'/picture';
 		    //load user timers
 		    brewService.fn(user.id, function(ref){
-				$scope.timers = ref;
-				// ref.$bind($scope,'timers');
-		    	// $scope.$apply();
+				//$scope.timers = ref;
+		    	//$scope.$apply();
+		    	if($scope.unbindTimers)
+		    		$scope.unbindTimers();
+				ref.$bind($scope,'timers').then(function (unbind) {
+            		$scope.unbindTimers = unbind;
+        		});
 			});
 
 		  } else {
 		    $scope.user = null;
 			brewService.fn('0', function(ref){
-				$scope.timers = ref;
-				// ref.$bind($scope,'timers');
+				//$scope.timers = ref;
 				//$scope.$apply();
+				if($scope.unbindTimers)
+					$scope.unbindTimers();
+				ref.$bind($scope,'timers').then(function (unbind) {
+            		$scope.unbindTimers = unbind;
+        		});
 			});
 		  }
 	});
@@ -120,23 +129,22 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 	$scope.startTimer = function (key,timer,event){
 
 		if($(event.target).hasClass('glyphicon-play')){
-			$scope.clock = $interval(function () { 
+			$scope.clocks[key] = $interval(function () { 
 				timer.elapsed++; 
 				// $scope.timers.$save(key);
 				if(timer.elapsed == timer.duration){
-					$scope.stopTimer();
+					$scope.stopTimer(key);
 				}
 			}, 1000);	
 			$(event.target).removeClass('glyphicon-play').addClass('glyphicon-pause');
 		} else {
-			$interval.cancel($scope.clock);
+			$scope.stopTimer(key);
 			$(event.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
 		}
     };
     
-    $scope.stopTimer = function(){
-    	$interval.cancel($scope.clock);
-    	$scope.clock = null;
+    $scope.stopTimer = function(key){
+    	$interval.cancel($scope.clocks[key]);
     };
 
     $scope.addMin = function (key,timer,event){
