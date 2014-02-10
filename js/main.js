@@ -65,25 +65,25 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		    $scope.user.photo = 'http://graph.facebook.com/'+user.id+'/picture';
 		    //load user timers
 		    brewService.fn(user.id, function(ref){
-				//$scope.timers = ref;
-		    	//$scope.$apply();
-		    	if($scope.unbindTimers)
-		    		$scope.unbindTimers();
-				ref.$bind($scope,'timers').then(function (unbind) {
-            		$scope.unbindTimers = unbind;
-        		});
+				$scope.timers = ref;
+		    	$scope.$apply();
+		  		// if($scope.unbindTimers)
+		  		// 		$scope.unbindTimers();
+				// ref.$bind($scope,'timers').then(function (unbind) {
+    			// $scope.unbindTimers = unbind;
+    			// });
 			});
 
 		  } else {
 		    $scope.user = null;
 			brewService.fn('0', function(ref){
-				//$scope.timers = ref;
-				//$scope.$apply();
-				if($scope.unbindTimers)
-					$scope.unbindTimers();
-				ref.$bind($scope,'timers').then(function (unbind) {
-            		$scope.unbindTimers = unbind;
-        		});
+				$scope.timers = ref;
+				$scope.$apply();
+				// if($scope.unbindTimers)
+				// 		$scope.unbindTimers();
+				// ref.$bind($scope,'timers').then(function (unbind) {
+    			// $scope.unbindTimers = unbind;
+    			// });
 			});
 		  }
 	});
@@ -131,6 +131,7 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 		if($(event.target).hasClass('glyphicon-play')){
 			$scope.clocks[key] = $interval(function () { 
 				timer.elapsed++; 
+				// TODO: save start time, running var
 				// $scope.timers.$save(key);
 				if(timer.elapsed == timer.duration){
 					$scope.stopTimer(key);
@@ -144,18 +145,20 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
     };
     
     $scope.stopTimer = function(key){
+    	// TODO: save stop time
     	$interval.cancel($scope.clocks[key]);
     };
 
     $scope.addMin = function (key,timer,event){
         timer.duration+=60; 
-        // $scope.timers.$save(key);
+        $scope.timers.$save(key);
     };
 
     $scope.subMin = function (key,timer,event){
-        if(timer.duration>0)
+        if(timer.duration>0){
         	timer.duration-=60;
-        // $scope.timers.$save(key);
+        	$scope.timers.$save(key);
+    	}
     };
 
     $scope.getMin = function (timer){
