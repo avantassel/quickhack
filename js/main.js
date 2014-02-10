@@ -140,13 +140,9 @@ app.controller("MainCtrl", function ($scope, brewService, $interval) {
 			$(event.target).removeClass('glyphicon-play').addClass('glyphicon-pause');
 		} else {
 			$scope.stopTimer(key);
+			$scope.timers.$save(key);
 			$(event.target).removeClass('glyphicon-pause').addClass('glyphicon-play');
 		}
-    };
-    
-    $scope.stopTimer = function(key){
-    	// TODO: save stop time
-    	$interval.cancel($scope.clocks[key]);
     };
 
     $scope.addMin = function (key,timer,event){
